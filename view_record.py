@@ -39,6 +39,46 @@ pprint({
 
 # With --steps, show each action in order and handle steps without an action field.
 if args.steps:
+    import ast
+    import re
+
     for number, step in enumerate(record["steps"], start=1):
-        print(f"\nStep {number}:")
-        print(step.get("action", "(No action recorded)"))
+        action = step.get("action")
+        print(f"\nStep {number}: {action}")
+
+        if not action:
+            continue
+
+        tree = step.get("axtree") or ""
+
+        try:
+            parsed = ast.parse(action)
+        except SyntaxError:
+            print("  Could not parse action.")
+            continue
+
+        for node in ast.walk(parsed):
+            if not isinstance(node, ast.Call):
+                continue
+
+            name = getattr(node.func, "id", "")
+            if name not in {"click", "fill", "hover", "press", "select_option"}:
+                continue
+
+            if not node.args or not isinstance(node.args[0], ast.Constant):
+                continue
+
+            target = str(node.args[0].value)
+            pattern = rf"^\s*\[{re.escape(target)}\](?:\s|$)"
+            matches = [
+                line.strip()
+                for line in tree.splitlines()
+                if re.search(pattern, line)
+            ]
+
+            if matches:
+                for match in matches:
+                    print(f"  Target: {match}")
+            else:
+                print(f"  Target [{target}] not found in this step's tree.")
+
