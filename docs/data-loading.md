@@ -60,13 +60,26 @@ Each command produces JSONL (one record per line) and a .manifest.json containin
 
 Shared fields: dataset, record_type, id, task_id, group_id, domain, agent, instruction, steps, labels, source_path, metadata. AgentRewardBench also includes raw annotations and validity metadata; OSWorld includes evaluator and setup config.
 
-Keep the same group_id together when creating splits. This groups different agents' trajectories for the same task. Split generation is a separate next step; these loaders do not assign calibration or test partitions.
+Keep the same group_id together when creating splits. This groups different agents' trajectories for the same task. The loaders themselves do not assign partitions; see the next section.
+
+## Splits
+
+```bash
+python -m loaders.splits --input data/processed/agentrewardbench.jsonl --output data/splits/agentrewardbench.json --ood-domain <domain> [--ood-domain <domain> ...] --calibration-fraction 0.5 --seed 0
+```
+
+- ood_test: every record whose domain (benchmark) is passed with --ood-domain. This is the held-out environment / task-family shift. The choice of held-out domain is a research decision and is required, not defaulted.
+- calibration and id_test: the remaining task groups, ordered by SHA-256 of seed:group_id and cut at round(groups × calibration-fraction). The calibration split is used only to choose review thresholds.
+
+Every record of a group_id lands in the same split, so different agents' runs on one task never straddle calibration and test. Assignment does not depend on input order. The command fails if an OOD domain is absent, if OOD covers all data, if a group spans the OOD boundary, if a record ID repeats, or if either in-distribution split would be empty. Records with unknown (null) labels are kept; downstream evaluation decides how to treat them, and the summary reports their count per split.
+
+The output JSON holds the config (including the input file's SHA-256), a per-split summary of records, groups, domains, and unknown labels, and the record-ID → split assignment. It is small and should be committed once the held-out domain is chosen, so all experiments share fixed splits.
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-Validation performed: 8 unit tests; all 369 live OSWorld task definitions; one live AgentRewardBench trajectory joined with its official annotation. Full 1,302-trajectory ingestion has not yet been run. Count checks are explicit so a changed or incomplete source cannot silently pass.
+Validation performed: 8 loader and 7 split unit tests; all 369 live OSWorld task definitions; one live AgentRewardBench trajectory joined with its official annotation. Full 1,302-trajectory ingestion has not yet been run. Count checks are explicit so a changed or incomplete source cannot silently pass.
 
 ## Sources
 
