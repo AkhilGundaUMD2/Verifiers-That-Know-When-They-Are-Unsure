@@ -4,10 +4,11 @@ Run commands from the project root with Python 3.11+. Loading local files uses o
 
 ## 1. AgentRewardBench
 
-Install the download dependency:
+Install the project dependencies (the loader and tests themselves use only the
+standard library; `huggingface_hub` is needed to download the dataset):
 
 ```bash
-python -m pip install huggingface_hub
+python -m pip install -r requirements.txt
 ```
 
 Download the pinned official snapshot. Only cleaned JSON files are downloaded; screenshots are optional and are not included here.
@@ -78,6 +79,10 @@ The output JSON holds the config (including the input file's SHA-256), a per-spl
 ```bash
 python -m unittest discover -s tests -v
 ```
+
+The unit tests include a CLI-level reproducibility check: with the same fixture
+input and split settings, two runs must produce byte-identical split files. This
+check runs in GitHub Actions without downloading either benchmark.
 
 Validation performed: 8 loader and 7 split unit tests; all 369 live OSWorld task definitions; one live AgentRewardBench trajectory joined with its official annotation. Full 1,302-trajectory ingestion has not yet been run. Count checks are explicit so a changed or incomplete source cannot silently pass.
 

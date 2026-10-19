@@ -1,5 +1,10 @@
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from collections import defaultdict
+from pathlib import Path
 from loaders.splits import assign_splits
 
 
@@ -59,6 +64,37 @@ class SplitTests(unittest.TestCase):
         records = dataset()
         with self.assertRaisesRegex(ValueError, 'Duplicate'):
             assign_splits(records + records[:1], ['assistantbench'])
+
+    def test_cli_output_is_reproducible(self):
+        records = dataset()
+        project_root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            input_path = temp_path / 'records.jsonl'
+            first_output = temp_path / 'first.json'
+            second_output = temp_path / 'second.json'
+            input_path.write_text(
+                ''.join(json.dumps(item) + '\n' for item in records),
+                encoding='utf-8',
+            )
+
+            for output_path in (first_output, second_output):
+                subprocess.run(
+                    [
+                        sys.executable, '-m', 'loaders.splits',
+                        '--input', str(input_path),
+                        '--output', str(output_path),
+                        '--ood-domain', 'assistantbench',
+                        '--calibration-fraction', '0.25',
+                        '--seed', '3',
+                    ],
+                    cwd=project_root,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+            self.assertEqual(first_output.read_bytes(), second_output.read_bytes())
 
 
 if __name__ == '__main__':
