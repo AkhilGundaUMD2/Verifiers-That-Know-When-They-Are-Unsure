@@ -2,6 +2,6 @@
 
 | Citation / Year | Paper Title & Link | Core Problem | Methodology | Datasets & Benchmarks | Key Findings | Limitations | Relevance to Project |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Example, 2024 | [Paper Title](https://arxiv.org/...) | Reward hacking | LLM-as-a-judge | OSWorld, WebArena | Improved success by X% | Poor uncertainty calibration | Addresses task success verification |
+| Ding et al., 2026 | [WildClawBench: A Benchmark for Real-World, Long-Horizon Agent Evaluation](https://arxiv.org/pdf/2605.10912) | Lack of realistic, long-horizon agent evaluation in native runtimes with real tools. | Introduces 60 human-authored tasks running in Docker containers with real CLI agent harnesses. Combines deterministic checks, environment-state audits, and LLM/VLM judges. | WildClawBench: 60 bilingual, multimodal tasks across six categories; evaluates 19 frontier models. | The best model achieved 62.2% overall success. Performance depends substantially on the chosen agent harness. | Limited to single-turn instructions; limited coverage of GUI-heavy and specialized workflows. | Provides long trajectories and side-effect checks for evaluating verifier reliability. Could support testing uncertainty detection and escalation, although uncertainty calibration is not directly evaluated. |
 | | | | | | | | |
 | | | | | | | | |
