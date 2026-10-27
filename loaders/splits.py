@@ -88,8 +88,13 @@ def main():
     summary = {split: {'records': e['records'], 'groups': len(e['groups']),
                        'domains': dict(e['domains']), 'unknown_labels': dict(e['unknown_labels'])}
                for split, e in summary.items()}
+    # Hash in 1 MiB chunks; processed inputs can be larger than available memory.
+    digest = hashlib.sha256()
+    with args.input.open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(chunk)
     output = {'config': {'input': args.input.as_posix(),
-                         'input_sha256': hashlib.sha256(args.input.read_bytes()).hexdigest(),
+                         'input_sha256': digest.hexdigest(),
                          'ood_domains': sorted(set(args.ood_domains)),
                          'calibration_fraction': args.calibration_fraction, 'seed': args.seed},
               'summary': summary, 'assignment': dict(sorted(assignment.items()))}
