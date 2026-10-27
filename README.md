@@ -20,7 +20,7 @@ or escalate a result for human review.
 - [x] Build rule-based browser verifier
 - [x] Build single-LLM judge (GPT-6 Luna)
 - [x] Score verifiers against human labels
-- [ ] Add unit tests for the baselines
+- [x] Add unit tests for the baselines
 - [ ] Run baselines on the full AgentRewardBench data
 
 ## D3 — Core Study
