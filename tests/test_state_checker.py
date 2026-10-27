@@ -58,3 +58,21 @@ class TestFileChanged(unittest.TestCase):
     def test_both_hashes_missing_is_unknown(self):
         result = check_file_changed(None, None)
         self.assertEqual(result["status"], "unknown")
+
+
+    def test_changed_file_passes(self):
+        from baselines.state_checker import check_file_changed
+
+        result = check_file_changed("before", "after")
+        self.assertEqual(result["status"], "pass")
+
+    def test_unchanged_file_fails(self):
+        from baselines.state_checker import check_file_changed
+
+        result = check_file_changed("same", "same")
+        self.assertEqual(result["status"], "fail")
+
+    def test_missing_hash_is_unknown(self):
+        from baselines.state_checker import check_file_changed
+
+        self.assertEqual(check_file_changed(None, "after")["status"], "unknown")
