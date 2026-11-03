@@ -25,7 +25,7 @@ or escalate a result for human review.
 
 ## D3 — Core Study
 
-- [ ] Generate task checklists (required items, prohibited side effects, incidental changes)
+- [X] Generate task checklists (required items, prohibited side effects, incidental changes)
 - [ ] Score checklist items with an LLM
 - [ ] Aggregate evidence into outcome and side-effect labels
 - [ ] Build hybrid state-plus-LLM verifier
