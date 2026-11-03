@@ -1,0 +1,135 @@
+{
+  "all": {
+    "looping": {
+      "accuracy": 0.7513555383423702,
+      "bad": 669,
+      "false_accept_rate": 0.40508221225710017,
+      "false_reject_rate": 0.08038585209003216,
+      "good": 622,
+      "labeled": 1291,
+      "review_rate": 0.0,
+      "unlabeled": 11
+    },
+    "outcome": {
+      "accuracy": 0.7931034482758621,
+      "bad": 940,
+      "false_accept_rate": 0.0,
+      "false_reject_rate": 0.5157593123209169,
+      "good": 349,
+      "labeled": 1289,
+      "review_rate": 0.32505818463925523,
+      "unlabeled": 13
+    },
+    "side_effect": {
+      "accuracy": 0.8579782790309106,
+      "bad": 83,
+      "false_accept_rate": 0.6626506024096386,
+      "false_reject_rate": 0.09472817133443164,
+      "good": 1214,
+      "labeled": 1297,
+      "review_rate": 0.07710100231303008,
+      "unlabeled": 5
+    }
+  },
+  "predictions": 1302,
+  "records": 1302,
+  "splits": {
+    "calibration": {
+      "looping": {
+        "accuracy": 0.7902439024390244,
+        "bad": 152,
+        "false_accept_rate": 0.5,
+        "false_reject_rate": 0.03875968992248062,
+        "good": 258,
+        "labeled": 410,
+        "review_rate": 0.0,
+        "unlabeled": 9
+      },
+      "outcome": {
+        "accuracy": 0.7236842105263158,
+        "bad": 271,
+        "false_accept_rate": 0.0,
+        "false_reject_rate": 0.44680851063829785,
+        "good": 141,
+        "labeled": 412,
+        "review_rate": 0.44660194174757284,
+        "unlabeled": 7
+      },
+      "side_effect": {
+        "accuracy": 0.86,
+        "bad": 28,
+        "false_accept_rate": 0.6785714285714286,
+        "false_reject_rate": 0.09536082474226804,
+        "good": 388,
+        "labeled": 416,
+        "review_rate": 0.038461538461538464,
+        "unlabeled": 3
+      }
+    },
+    "id_test": {
+      "looping": {
+        "accuracy": 0.7090464547677262,
+        "bad": 186,
+        "false_accept_rate": 0.5161290322580645,
+        "false_reject_rate": 0.1031390134529148,
+        "good": 223,
+        "labeled": 409,
+        "review_rate": 0.0,
+        "unlabeled": 2
+      },
+      "outcome": {
+        "accuracy": 0.7918367346938775,
+        "bad": 305,
+        "false_accept_rate": 0.0,
+        "false_reject_rate": 0.51,
+        "good": 100,
+        "labeled": 405,
+        "review_rate": 0.3950617283950617,
+        "unlabeled": 6
+      },
+      "side_effect": {
+        "accuracy": 0.8689839572192514,
+        "bad": 33,
+        "false_accept_rate": 0.6363636363636364,
+        "false_reject_rate": 0.07446808510638298,
+        "good": 376,
+        "labeled": 409,
+        "review_rate": 0.08557457212713937,
+        "unlabeled": 2
+      }
+    },
+    "ood_test": {
+      "looping": {
+        "accuracy": 0.7542372881355932,
+        "bad": 331,
+        "false_accept_rate": 0.2990936555891239,
+        "false_reject_rate": 0.12056737588652482,
+        "good": 141,
+        "labeled": 472,
+        "review_rate": 0.0,
+        "unlabeled": 0
+      },
+      "outcome": {
+        "accuracy": 0.8337531486146096,
+        "bad": 364,
+        "false_accept_rate": 0.0,
+        "false_reject_rate": 0.6111111111111112,
+        "good": 108,
+        "labeled": 472,
+        "review_rate": 0.15889830508474576,
+        "unlabeled": 0
+      },
+      "side_effect": {
+        "accuracy": 0.8463356973995272,
+        "bad": 22,
+        "false_accept_rate": 0.6818181818181818,
+        "false_reject_rate": 0.1111111111111111,
+        "good": 450,
+        "labeled": 472,
+        "review_rate": 0.1038135593220339,
+        "unlabeled": 0
+      }
+    }
+  },
+  "verifier": "rules"
+}
