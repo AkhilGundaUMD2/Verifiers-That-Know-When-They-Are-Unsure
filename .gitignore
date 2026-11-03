@@ -3,4 +3,6 @@ data/processed/
 .venv/
 __pycache__/
 *.pyc
+.env.DS_Store
+out/
 .env
