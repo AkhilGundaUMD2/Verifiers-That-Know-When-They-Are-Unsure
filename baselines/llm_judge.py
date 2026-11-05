@@ -5,13 +5,14 @@ caused, and the final page's accessibility tree. It returns the same
 pass/fail/unknown axes as browser_checker.verify so the two are comparable.
 """
 import json
-
+import re
 from .browser_checker import find_target, parse_calls
 
 MODEL = "gpt-6-luna"
 
 # Long trees are cut so one trajectory stays a modest request.
 MAX_TREE_CHARS = 8000
+MAX_FACT_LINES = 300
 
 SYSTEM_PROMPT = """You verify whether a web agent completed a task.
 You get the user's instruction, the agent's actions in order (each click or
@@ -47,8 +48,28 @@ PROBLEM = {"yes": "fail", "no": "pass", "unsure": "unknown"}
 ELEMENT_ACTIONS = {"click", "dblclick", "hover", "fill", "press", "focus",
                    "select_option", "check", "uncheck", "clear"}
 
+def page_facts(steps, limit=MAX_FACT_LINES):
+    """Page lines with a number, plus the line above each, listed once at the step they first appeared.
 
-def build_prompt(record):
+    If there are more than limit lines, the newest are kept, because the pages
+    nearest the agent's answer matter most.
+    """
+    seen, facts = set(), []
+    for number, step in enumerate(steps, start=1):
+        lines = (step.get("axtree") or "").splitlines()
+        for index, line in enumerate(lines):
+            # Check the element's text, not its bid, which is always a number.
+            if not re.search(r"\d", " ".join(re.findall(r"'([^']*)'", line))):
+                continue
+            # The label for a price or count is usually the line just above it.
+            for candidate in lines[max(0, index - 1):index + 1]:
+                key = " ".join(re.findall(r"'([^']*)'", candidate)) or candidate.strip()
+                if key in seen:
+                    continue
+                seen.add(key)
+                facts.append(f"  step {number}: {candidate.strip()[:160]}")
+    return facts[-limit:]
+def build_prompt(record, with_page_facts=False):
     """Render one trajectory as plain text for the judge."""
     steps = record["steps"]
     lines = [f"Instruction: {record['instruction']}", "", "Actions:"]
@@ -71,6 +92,10 @@ def build_prompt(record):
     if not any(name in {"send_msg_to_user", "report_infeasible"}
                for step in steps for name, _ in parse_calls(step.get("action"))):
         lines.append("(The agent stopped without sending a final answer.)")
+    if with_page_facts:
+        facts = page_facts(steps)
+        if facts:
+            lines += ["", "Numbers and values that appeared on pages the agent visited:"] + facts
     tree = steps[-1].get("axtree") or "(not recorded)"
     if len(tree) > MAX_TREE_CHARS:
         tree = tree[:MAX_TREE_CHARS] + "\n... (truncated)"
