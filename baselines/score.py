@@ -64,7 +64,7 @@ def score(labels, predictions):
 
 def main():
     parser = argparse.ArgumentParser(description="Score verifier predictions against human labels.")
-    parser.add_argument("--records", required=True, type=Path, help="Processed JSONL from python -m loaders")
+    parser.add_argument("--records", required=True, type=Path, help="Processed JSONL, or labels JSONL from python -m baselines.labels")
     parser.add_argument("--predictions", required=True, type=Path, help="JSONL from python -m baselines")
     parser.add_argument("--splits", type=Path, help="Split JSON from python -m loaders.splits")
     parser.add_argument("--output", type=Path)
