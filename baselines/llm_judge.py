@@ -71,7 +71,8 @@ def build_prompt(record):
     if not any(name in {"send_msg_to_user", "report_infeasible"}
                for step in steps for name, _ in parse_calls(step.get("action"))):
         lines.append("(The agent stopped without sending a final answer.)")
-    tree = steps[-1].get("axtree") or "(not recorded)"
+    tree = steps[-1].get("axtree") if steps else None
+    tree = tree or "(not recorded)"
     if len(tree) > MAX_TREE_CHARS:
         tree = tree[:MAX_TREE_CHARS] + "\n... (truncated)"
     lines += ["", "Final page accessibility tree:", tree]
