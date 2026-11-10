@@ -26,9 +26,9 @@ or escalate a result for human review.
 ## D3 — Core Study
 
 - [ ] Generate task checklists (required items, prohibited side effects, incidental changes)
-- [ ] Score checklist items with an LLM
-- [ ] Aggregate evidence into outcome and side-effect labels
-- [ ] Build hybrid state-plus-LLM verifier
+- [x] Score checklist items with an LLM
+- [x] Aggregate evidence into outcome and side-effect labels
+- [x] Build hybrid state-plus-LLM verifier
 
 ## D4 — Research Extension
 
