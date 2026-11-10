@@ -5,6 +5,7 @@ from baselines.browser_checker import check_looping
 from baselines.llm_judge import MODEL, build_prompt as build_trajectory_prompt
 
 from .checklist import KINDS
+from .uncertainty import CAUSES, classify, classify_item
 
 STATUSES = {"pass", "fail", "unknown"}
 
@@ -18,9 +19,10 @@ ITEM_SCORES_SCHEMA = {
                 "properties": {
                     "item_id": {"type": "string"},
                     "status": {"type": "string", "enum": ["pass", "fail", "unknown"]},
+                    "cause": {"type": "string", "enum": list(CAUSES)},
                     "reason": {"type": "string"},
                 },
-                "required": ["item_id", "status", "reason"],
+                "required": ["item_id", "status", "cause", "reason"],
                 "additionalProperties": False,
             },
         },
@@ -37,6 +39,17 @@ trajectory. For each checklist item, return exactly one assessment:
 Use fail when the evidence shows the condition was not met, and unknown when
 the trajectory does not provide enough evidence. Do not infer final system
 state from an attempted action alone. Cite the evidence briefly in the reason.
+Give a cause for every item. Use "none" when the status is pass or fail. When
+the status is unknown, say why:
+- missing_evidence: a recording of this run could have settled it but this one
+  does not, for example the deciding page was not recorded or was truncated,
+  or the result of the relevant action is not shown.
+- ambiguous_criterion: the instruction or item has more than one reasonable
+  reading and the run meets some readings but not others, so reviewers with
+  full evidence could still disagree.
+- unverifiable: no browser trajectory of this task could settle it, for example
+  hidden server-side state, effects outside the browser, or a real-world fact
+  that only an outside source could confirm.
 Return an assessment for every item ID exactly once."""
 
 
@@ -73,11 +86,12 @@ def _validate_evidence(evidence, item_ids, source):
         reason = entry.get("reason", "")
         if not isinstance(reason, str):
             raise ValueError(f"{source} evidence reason must be a string.")
-        checked.append({
-            "item_id": item_id,
-            "status": status,
-            "reason": reason,
-        })
+        entry_out = {"item_id": item_id, "status": status, "reason": reason}
+        if "cause" in entry:
+            if entry["cause"] not in CAUSES:
+                raise ValueError(f"Invalid {source} evidence cause: {entry['cause']!r}")
+            entry_out["cause"] = entry["cause"]
+        checked.append(entry_out)
     return checked
 
 
@@ -136,7 +150,8 @@ def score_items(record, items, client=None, model=MODEL):
     if error:
         return {
             "items": [
-                {"item_id": item["id"], "status": "unknown", "reason": error}
+                {"item_id": item["id"], "status": "unknown",
+                 "cause": "missing_evidence", "reason": error}
                 for item in items
             ],
             "error": error,
@@ -179,11 +194,13 @@ def aggregate_evidence(items, llm_evidence, state_evidence):
         item_state = state_by_id.get(item["id"], [])
         statuses = ([item_llm["status"]] if item_llm else [])
         statuses.extend(entry["status"] for entry in item_state)
+        status = _combine(statuses)
         results.append({
             "id": item["id"],
             "kind": item["kind"],
             "description": item["description"],
-            "status": _combine(statuses),
+            "status": status,
+            "uncertainty": classify_item(status, item_llm, item_state),
             "llm": item_llm,
             "state": item_state,
         })
@@ -197,6 +214,7 @@ def aggregate_evidence(items, llm_evidence, state_evidence):
     return {
         "outcome": outcome,
         "side_effect": side_effect,
+        "uncertainty": classify({"outcome": outcome, "side_effect": side_effect}, results),
         "checklist_evidence": results,
     }
 
@@ -212,6 +230,7 @@ def verify(record, items, state_evidence, client=None, model=MODEL):
         "outcome": aggregated["outcome"],
         "side_effect": aggregated["side_effect"],
         "looping": check_looping(record)["status"],
+        "uncertainty": aggregated["uncertainty"],
         "checklist_evidence": aggregated["checklist_evidence"],
         "llm_error": scored["error"],
     }

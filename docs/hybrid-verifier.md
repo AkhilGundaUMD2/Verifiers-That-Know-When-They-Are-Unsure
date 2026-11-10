@@ -28,6 +28,37 @@ required item fails the outcome axis; any failed prohibited item fails the
 side-effect axis. Incidental items are included in evidence but do not change
 either label.
 
+## Uncertainty types
+
+`verifier/uncertainty.py` gives every checklist item and every axis label
+(`outcome`, `side_effect`) an uncertainty type, or `null` when the result is
+confident. The hybrid output carries the axis types in `uncertainty` and the
+item types in each `checklist_evidence` row.
+
+| Type | Meaning | Signals |
+|---|---|---|
+| `epistemic` | Reducible: better observation of the same run would settle it | LLM cause `missing_evidence`; LLM refusal or truncation; a state predicate returned `unknown`; LLM and state evidence disagree |
+| `aleatoric` | The task itself is ambiguous; reviewers with full evidence could disagree | LLM cause `ambiguous_criterion` |
+| `out_of_scope` | No browser trajectory could settle it | LLM cause `unverifiable`; the checklist has no item for the axis |
+
+The LLM scorer returns a `cause` for every item (`none` when it passes or
+fails). An unknown item with no cause defaults to `epistemic`. When several
+types apply, the least reducible wins: `out_of_scope`, then `aleatoric`, then
+`epistemic`.
+
+An axis that passes is confident. An axis that fails is confident if at least
+one failing item is confident; if every failing item rests on conflicting
+evidence, the axis is typed `epistemic`. An unknown axis takes the strongest
+type among its unknown items.
+
+The scorer reports `review_by_type` for each typed axis: how many reviewed
+(unknown) trajectories fall under each type, and how many of them humans
+labeled bad.
+
+One way to check the aleatoric signal: 106 AgentRewardBench trajectories have
+two annotators, who disagree on success for 13 of them. Those 13 should be
+typed `aleatoric` more often than the rest.
+
 ## Run
 
 ```bash

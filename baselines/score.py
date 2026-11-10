@@ -9,6 +9,10 @@ trajectory goes to a human, so it counts toward review_rate and never as an erro
 - accuracy: agreement with humans on the trajectories the verifier decided.
 
 Records whose human label is unknown (null) are counted but not scored.
+
+When predictions carry an uncertainty type per axis (the hybrid verifier's
+"uncertainty" field), review_by_type splits the reviewed trajectories by type
+and counts how many humans labeled bad on that axis.
 """
 import argparse
 import json
@@ -56,10 +60,29 @@ def score_axis(axis, pairs):
             "false_reject_rate": ratio(counts["false_reject"], counts["good"])}
 
 
+def review_by_type(axis, triples):
+    """triples: (human label, predicted status, uncertainty type) for one axis."""
+    counts = defaultdict(lambda: {"count": 0, "bad": 0})
+    for label, status, kind in triples:
+        if label is None or status != "unknown":
+            continue
+        entry = counts[kind or "untyped"]
+        entry["count"] += 1
+        entry["bad"] += not is_good(axis, label)
+    return dict(sorted(counts.items()))
+
+
 def score(labels, predictions):
     """labels: id -> human labels; predictions: id -> verifier result."""
-    return {axis: score_axis(axis, [(labels[i][field], predictions[i][axis]) for i in predictions])
-            for axis, field in AXES.items()}
+    report = {}
+    for axis, field in AXES.items():
+        report[axis] = score_axis(axis, [(labels[i][field], predictions[i][axis]) for i in predictions])
+        types = [(p.get("uncertainty") or {}).get(axis) for p in predictions.values()]
+        if any(p.get("uncertainty") and axis in p["uncertainty"] for p in predictions.values()):
+            report[axis]["review_by_type"] = review_by_type(
+                axis, [(labels[i][field], predictions[i][axis], t)
+                       for i, t in zip(predictions, types)])
+    return report
 
 
 def main():
