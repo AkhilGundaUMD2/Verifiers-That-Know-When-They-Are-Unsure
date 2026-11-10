@@ -1,0 +1,224 @@
+{
+  "axes": [
+    {
+      "alpha": 0.05,
+      "axis": "outcome",
+      "calibration_bad_runs": 271,
+      "calibration_tasks": 116,
+      "crc": {
+        "lambda": "inf",
+        "splits": {
+          "calibration": {
+            "review_rate": 1.0,
+            "risk": 0.0,
+            "runs": 412,
+            "tasks": 116
+          },
+          "id_test": {
+            "review_rate": 1.0,
+            "review_rate_ci95": [
+              1.0,
+              1.0
+            ],
+            "risk": 0.0,
+            "risk_ci95": [
+              0.0,
+              0.0
+            ],
+            "runs": 405,
+            "tasks": 117
+          },
+          "ood_test": {
+            "review_rate": 1.0,
+            "review_rate_ci95": [
+              1.0,
+              1.0
+            ],
+            "risk": 0.0,
+            "risk_ci95": [
+              0.0,
+              0.0
+            ],
+            "runs": 472,
+            "tasks": 118
+          }
+        }
+      },
+      "delta": 0.1,
+      "ltt": {
+        "lambda": "inf",
+        "splits": {
+          "calibration": {
+            "review_rate": 1.0,
+            "risk": 0.0,
+            "runs": 412,
+            "tasks": 116
+          },
+          "id_test": {
+            "review_rate": 1.0,
+            "review_rate_ci95": [
+              1.0,
+              1.0
+            ],
+            "risk": 0.0,
+            "risk_ci95": [
+              0.0,
+              0.0
+            ],
+            "runs": 405,
+            "tasks": 117
+          },
+          "ood_test": {
+            "review_rate": 1.0,
+            "review_rate_ci95": [
+              1.0,
+              1.0
+            ],
+            "risk": 0.0,
+            "risk_ci95": [
+              0.0,
+              0.0
+            ],
+            "runs": 472,
+            "tasks": 118
+          }
+        }
+      },
+      "resplit_check": {
+        "mean_review_rate": 1.0,
+        "mean_risk": 0.0,
+        "reps": 1000,
+        "risk_p95": 0.0,
+        "share_above_alpha": 0.0
+      },
+      "risk_curve": [
+        {
+          "lambda": "inf",
+          "risk": 0.0
+        },
+        {
+          "lambda": 0.5,
+          "risk": 0.2507183908045977
+        },
+        {
+          "lambda": 0.0,
+          "risk": 0.6573275862068966
+        }
+      ]
+    },
+    {
+      "alpha": 0.1,
+      "axis": "side_effect",
+      "calibration_bad_runs": 28,
+      "calibration_tasks": 116,
+      "crc": {
+        "lambda": 0.0,
+        "splits": {
+          "calibration": {
+            "review_rate": 0.0,
+            "risk": 0.07471264367816091,
+            "runs": 416,
+            "tasks": 116
+          },
+          "id_test": {
+            "review_rate": 0.0,
+            "review_rate_ci95": [
+              0.0,
+              0.0
+            ],
+            "risk": 0.08333333333333333,
+            "risk_ci95": [
+              0.0527065527065527,
+              0.11894586894586893
+            ],
+            "runs": 409,
+            "tasks": 117
+          },
+          "ood_test": {
+            "review_rate": 0.0,
+            "review_rate_ci95": [
+              0.0,
+              0.0
+            ],
+            "risk": 0.046610169491525424,
+            "risk_ci95": [
+              0.0211864406779661,
+              0.07627118644067797
+            ],
+            "runs": 472,
+            "tasks": 118
+          }
+        }
+      },
+      "delta": 0.1,
+      "ltt": {
+        "lambda": "inf",
+        "splits": {
+          "calibration": {
+            "review_rate": 1.0,
+            "risk": 0.0,
+            "runs": 416,
+            "tasks": 116
+          },
+          "id_test": {
+            "review_rate": 1.0,
+            "review_rate_ci95": [
+              1.0,
+              1.0
+            ],
+            "risk": 0.0,
+            "risk_ci95": [
+              0.0,
+              0.0
+            ],
+            "runs": 409,
+            "tasks": 117
+          },
+          "ood_test": {
+            "review_rate": 1.0,
+            "review_rate_ci95": [
+              1.0,
+              1.0
+            ],
+            "risk": 0.0,
+            "risk_ci95": [
+              0.0,
+              0.0
+            ],
+            "runs": 472,
+            "tasks": 118
+          }
+        }
+      },
+      "resplit_check": {
+        "mean_review_rate": 0.011031640492479056,
+        "mean_risk": 0.07690954415954415,
+        "reps": 1000,
+        "risk_p95": 0.09686609686609686,
+        "share_above_alpha": 0.029
+      },
+      "risk_curve": [
+        {
+          "lambda": "inf",
+          "risk": 0.0
+        },
+        {
+          "lambda": 1.0,
+          "risk": 0.05316091954022988
+        },
+        {
+          "lambda": 0.5,
+          "risk": 0.05603448275862069
+        },
+        {
+          "lambda": 0.0,
+          "risk": 0.07471264367816091
+        }
+      ]
+    }
+  ],
+  "predictions": "results/rules_agentrewardbench.jsonl",
+  "verifier": [
+    "rules"
+  ]
+}
