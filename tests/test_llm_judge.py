@@ -60,6 +60,10 @@ class LlmJudgeTests(unittest.TestCase):
             build_prompt(record),
         )
 
+    def test_build_prompt_handles_empty_trajectory(self):
+        prompt = build_prompt({"instruction": "Task", "steps": []})
+        self.assertIn("Final page accessibility tree:\n(not recorded)", prompt)
+
     def test_build_prompt_truncates_long_final_tree(self):
         record = {
             "instruction": "Task",
