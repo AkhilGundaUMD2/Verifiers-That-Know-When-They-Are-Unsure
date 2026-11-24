@@ -33,8 +33,8 @@ or escalate a result for human review.
 ## D4 — Research Extension
 
 - [x] Classify uncertainty as epistemic, aleatoric, or out-of-scope
-- [ ] Choose review thresholds with conformal risk control on the calibration split
-- [ ] Add cost-aware accept / reject / escalate policy
+- [x] Choose review thresholds with conformal risk control on the calibration split
+- [x] Add cost-aware accept / reject / escalate policy
 
 ## D5 — Full Result
 
