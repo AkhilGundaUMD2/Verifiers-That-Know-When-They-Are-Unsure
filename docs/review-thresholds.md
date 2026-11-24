@@ -36,8 +36,9 @@ runs in calibration), so the plain bound does not apply to it.
 
 **One-sided policy.** This rule either accepts or escalates. A verdict of
 `fail` falls below every λ > 0, so it is escalated, not auto-rejected. Adding a
-reject band (accept / reject / escalate) brings in a second risk and belongs
-to the cost-aware policy, D4 item 3 (see [Extensions](#extensions)).
+reject band (accept / reject / escalate) is handled by the
+[cost-aware policy](cost-aware-policy.md). That policy minimizes calibration
+cost; it does not add a statistical guarantee for the reject region.
 
 ## 2. Sampling unit: the task, not the run
 
@@ -211,10 +212,11 @@ calibration set with cases the policy never accepts.
 
 ## Extensions
 
-- **Accept / reject / escalate.** Two thresholds control two risks (false
-  accept, false reject). Use LTT over a grid of (λ_lo, λ_hi) with a correction
-  for testing many hypotheses, or control the false-accept risk with CRC and
-  choose λ_lo by cost. This is D4 item 3.
+- **Joint risk guarantees for accept / reject / escalate.** The implemented
+  [cost-aware policy](cost-aware-policy.md) chooses two thresholds by
+  calibration cost, but does not certify either error risk. To add guarantees,
+  control false-accept and false-reject risks jointly, accounting for the
+  threshold-pair search (for example, with a corrected LTT grid).
 - **Joint guarantee across axes.** Calibrating each axis at α controls each
   one separately. To guarantee that neither axis lets a bad run through, split
   α between the axes (Bonferroni) or define a combined loss.
