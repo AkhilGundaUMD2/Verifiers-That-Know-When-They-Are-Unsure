@@ -38,8 +38,22 @@ or escalate a result for human review.
 
 ## D5 — Full Result
 
-- [ ] Compare against single-judge and rule-based baselines
+- [x] Add a single-judge and rule-based baseline comparison report
 - [ ] Run ablations on uncertainty typing and cost-aware thresholds
 - [ ] Map where guarantees break on the OOD split
 - [ ] Build adversarial test cases
 - [ ] Write experiment report
+
+Compare verifier JSONL files against human labels:
+
+```bash
+python compare_outcomes.py \
+  results/rules_agentrewardbench.jsonl \
+  results/llm_agentrewardbench.jsonl \
+  results/hybrid_agentrewardbench.jsonl \
+  --splits data/splits/agentrewardbench.json \
+  --output results/baseline-comparison.json
+```
+
+The comparison defaults to the first 47 records, matching the original
+outcome script. Pass `--limit 0` to compare every record.
